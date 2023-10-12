@@ -1,0 +1,1 @@
+from src.controller.client import app as app_client
