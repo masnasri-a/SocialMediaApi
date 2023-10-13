@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from src.controller import app_client
+from src.controller import app_client, app_instagram
 
 app = FastAPI()
 
@@ -9,6 +9,7 @@ def index():
     return RedirectResponse("/docs")
 
 app.include_router(app_client, prefix="/api/v1", tags=["client"])
+app.include_router(app_instagram, prefix="/api/v1", tags=["instagram"])
 
 if __name__ == "__main__":
     import uvicorn
