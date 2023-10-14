@@ -1,4 +1,5 @@
 import json
+import bs4
 import requests
 from fake_headers import Headers
 
@@ -62,3 +63,31 @@ class Instagram:
                 print('Error : ', response.status_code, response.text)
         except Exception as ex:
             print(ex)
+    
+    @staticmethod
+    def posts(short_code,username, proxy = None):
+        headers = Instagram.build_headers(username)
+        params = Instagram.build_param(username)
+        response = Instagram.make_request(f'https://instagram.com/p/{short_code}',
+        headers=headers, params=params, proxy=proxy)
+        if response.status_code == 200:
+            # profile_data = response.json()['data']['user']
+            # return json.dumps(profile_data)
+            html = bs4.BeautifulSoup(response.text, 'html.parser')
+            # find the meta tag containing the link to the post's media.
+            meta = html.find(attrs={"property": "al:ios:url"})
+            media_id = meta.attrs['content'].replace("instagram://media?id=", "")
+            print(media_id)
+            # use the media id to get the same response as ?__a=1 for the post.
+            media_api_url = f"https://i.instagram.com/api/v1/media/{media_id}/info"
+            print(media_api_url)
+            print(headers)
+            media_api_response = requests.get(media_api_url,headers=headers)
+            # print(media_api_response.text)
+            # htmls = bs4.BeautifulSoup(media_api_response.text, 'html.parser')
+            # print(htmls)
+            # media_json = media_api_response.json()
+            # return json.dumps(media_json)
+        else:
+            print('Error : ', response.status_code, response.text)
+

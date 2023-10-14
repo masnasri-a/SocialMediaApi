@@ -1,7 +1,16 @@
+from enum import Enum
 import hashlib
 from pydantic import BaseModel, Field, EmailStr, validator
 
+class RoleEnum(Enum):
+    TRIAL = "TRIAL"
+    BASIC = "BASIC"
+    PREMIUM = "PREMIUM"
+
+    SUPER_ADMIN = "SUPER_ADMIN"
+
 class ClientModel(BaseModel):
+    username:str = Field(..., examples=["nasri"])
     full_name:str = Field(..., examples=["Nasri Adzlani"])
     email: EmailStr
     password:str = Field(..., examples=['rahasia'])
@@ -12,7 +21,7 @@ class ClientModel(BaseModel):
         return hashed_password
     
 class LoginClientModel(BaseModel):
-    email: EmailStr
+    username: str = Field(..., examples=["nasri"])
     password:str = Field(..., examples=['rahasia'])
 
     @validator("password")

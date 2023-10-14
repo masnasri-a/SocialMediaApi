@@ -1,4 +1,6 @@
 
+from datetime import datetime
+from fastapi import HTTPException
 from src.config.mongo import mongo_client
 
 
@@ -18,3 +20,16 @@ def validate_client(client_id:str = None, email:str = None):
         if result:
             return True
     return False
+
+def validator_expired(client_id):
+    client, collection = mongo_client()
+    with client:
+        data = collection.find_one({'_id':client_id})
+        if data is None:
+            raise HTTPException(status_code=400, detail="invalid client id")
+        role = data.get('role')
+        if 'TRIAL' in role:
+            date_obj = data.get('expired_at')
+            if date_obj < datetime.now():
+                raise HTTPException(status_code=403, detail="Client Id Has Expired")
+        return role

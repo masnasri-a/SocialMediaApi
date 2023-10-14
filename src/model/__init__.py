@@ -1,1 +1,1 @@
-from src.model.client import ClientModel
+from src.model.client import ClientModel, RoleEnum
